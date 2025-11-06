@@ -17,6 +17,7 @@ import com.dremio.support.diagnostics.shared.UsageLogger;
 import com.dremio.support.diagnostics.simple.ProfileJSONSimplified;
 import io.javalin.Javalin;
 import io.javalin.http.Handler;
+import io.javalin.http.staticfiles.Location;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -106,6 +107,12 @@ public class DQDWebServer {
         Javalin.create(
                 config -> {
                   config.http.maxRequestSize = 10 * 1000000; // 10mb
+                  config.staticFiles.add(
+                      staticFiles -> {
+                        staticFiles.directory = "com/dremio/support/diagnostics/server";
+                        staticFiles.location = Location.CLASSPATH;
+                        staticFiles.hostedPath = "/";
+                      });
                 })
             .start(port);
     app.get("/", this.getIndex);

@@ -13,6 +13,20 @@ dqd server
 ```
 navigate to http://localhost:8080
 
+### Développement de l’interface web
+
+Une application React outillée avec Vite vit désormais dans `frontend/`.
+
+```bash
+cd frontend
+npm install
+npm run dev   # lance le serveur Vite sur http://localhost:5173
+```
+
+La construction de production (`npm run build`) place les fichiers dans
+`src/main/resources/com/dremio/support/diagnostics/server` et est déclenchée automatiquement par `mvn package`
+via `frontend-maven-plugin`.
+
 ## CLI usage
 
 This provides an alternative to the web ui and some people prefer it as a general workflow. The same reports are generated in the CLI as in the web server.
