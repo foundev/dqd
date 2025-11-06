@@ -55,7 +55,7 @@ export function SectionRenderer({ section, version, onSubmit }: SectionRendererP
 
       {section.checklist?.length ? (
         <div className="section__checklist">
-          <h2>Suivez les étapes</h2>
+          <h2>Follow the steps</h2>
           <ol>
             {section.checklist.map((item, index) => (
               <li key={index}>{item}</li>

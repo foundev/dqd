@@ -13,20 +13,20 @@ export function App() {
     let cancelled = false;
 
     async function fetchVersion() {
-      try {
-        const response = await fetch('/about.json');
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
+        try {
+          const response = await fetch('/about.json');
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          const data = await response.json();
+          if (!cancelled) {
+            setVersion(data?.version ? `DQD ${data.version}` : 'DQD');
+          }
+        } catch (error) {
+          if (!cancelled) {
+            console.warn('Unable to fetch version information', error);
+          }
         }
-        const data = await response.json();
-        if (!cancelled) {
-          setVersion(data?.version ? `DQD ${data.version}` : 'DQD');
-        }
-      } catch (error) {
-        if (!cancelled) {
-          console.warn('Impossible de récupérer la version', error);
-        }
-      }
     }
 
     fetchVersion();
@@ -49,11 +49,11 @@ export function App() {
 
   return (
     <div className="app-shell">
-      <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : ''}`} aria-label="Navigation principale">
+      <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : ''}`} aria-label="Main navigation">
         <div className="sidebar__header">
           <span className="sidebar__product">Dremio Query Doctor</span>
-          <span className="sidebar__tagline">Diagnostics guidés pour vos fichiers de support</span>
-          <span className="sidebar__version">{version || 'version inconnue'}</span>
+          <span className="sidebar__tagline">Guided diagnostics for your support files</span>
+          <span className="sidebar__version">{version || 'unknown version'}</span>
         </div>
         <nav className="sidebar__nav">
           {SECTIONS.map((section) => (
@@ -69,9 +69,9 @@ export function App() {
           ))}
         </nav>
         <div className="sidebar__footer">
-          <div>Besoin d’aide supplémentaire ?</div>
+          <div>Need additional help?</div>
           <a href="https://github.com/rsvihladremio/dqd" target="_blank" rel="noreferrer">
-            Contribuer sur GitHub
+            Contribute on GitHub
           </a>
         </div>
       </aside>
@@ -81,7 +81,7 @@ export function App() {
           <button
             type="button"
             className="icon-button"
-            aria-label={sidebarOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+            aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
             onClick={() => setSidebarOpen((open) => !open)}
           >
             <span className="material-symbols-rounded">{sidebarOpen ? 'close' : 'menu'}</span>

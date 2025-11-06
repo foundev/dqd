@@ -29,7 +29,7 @@ export function UploadForm({ formConfig, onSubmit }: UploadFormProps) {
   const [fileSummaries, setFileSummaries] = useState<Record<string, string>>(() => {
     const initialSummaries: Record<string, string> = {};
     fileFields.forEach((field) => {
-      initialSummaries[field.name] = field.placeholder || 'Aucun fichier sélectionné';
+      initialSummaries[field.name] = field.placeholder || 'No file selected';
     });
     return initialSummaries;
   });
@@ -48,7 +48,7 @@ export function UploadForm({ formConfig, onSubmit }: UploadFormProps) {
         ...prev,
         [field.name]: files.length
           ? files.map((file) => file.name).join(', ')
-          : field.placeholder || 'Aucun fichier sélectionné'
+          : field.placeholder || 'No file selected'
       }));
     },
     []
@@ -90,7 +90,7 @@ export function UploadForm({ formConfig, onSubmit }: UploadFormProps) {
                 <label className="file-upload">
                   <span className="file-upload__icon material-symbols-rounded">file_upload</span>
                   <div className="file-upload__text">
-                    <span className="file-upload__title">{field.buttonLabel || 'Choisir un fichier'}</span>
+                    <span className="file-upload__title">{field.buttonLabel || 'Select a file'}</span>
                     <span className="file-upload__subtitle">{fileSummaries[field.name]}</span>
                   </div>
                   <input
@@ -189,7 +189,7 @@ export function UploadForm({ formConfig, onSubmit }: UploadFormProps) {
           {formConfig.buttonIcon && (
             <span className="material-symbols-rounded">{formConfig.buttonIcon}</span>
           )}
-          <span>{formConfig.buttonText || 'Envoyer'}</span>
+          <span>{formConfig.buttonText || 'Submit'}</span>
         </button>
       </div>
     </form>

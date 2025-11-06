@@ -21,197 +21,189 @@ const tomorrowDate = (): string => {
 export const SECTIONS: Section[] = [
   {
     id: 'home',
-    navLabel: 'Accueil',
+    navLabel: 'Home',
     navIcon: 'dashboard',
     hero: {
-      eyebrow: 'Bienvenue',
+      eyebrow: 'Welcome',
       title: (version) => version || 'Dremio Query Doctor',
       subtitle:
-        'Retrouvez en un seul lieu des diagnostics rapides pour vos fichiers profile.json, queries.json et autres artefacts de support. Téléversez vos fichiers, laissez DQD travailler et accélérez vos analyses.'
+        'Bring every profile.json, queries.json and related diagnostic artifact into a single guided experience. Upload your files, let DQD do the heavy lifting, and accelerate your investigation.'
     },
     cards: [
       {
         icon: 'rocket_launch',
-        title: 'Analyses en quelques minutes',
-        body: 'Déposez vos fichiers collectés et obtenez des rapports lisibles pour accélérer les investigations.'
+        title: 'Insights in minutes',
+        body: 'Upload support bundles and receive readable summaries that speed up triage and decision making.'
       },
       {
         icon: 'travel_explore',
-        title: 'Vue d’ensemble claire',
-        body: 'Naviguez par thématique : profils simples ou détaillés, comparaisons, requêtes, IOstat et plus encore.'
+        title: 'Use-case navigation',
+        body: 'Switch between simple and detailed profiles, comparisons, queries.json analysis, IOStat, and more.'
       },
       {
         icon: 'hub',
-        title: 'Un workflow guidé',
-        body: 'Chaque page rappelle le but de l’outil et ce qu’il faut fournir pour tirer le meilleur du diagnostic.'
+        title: 'Guided workflow',
+        body: 'Each section explains its purpose and the files you need in order to get the best report.'
       },
       {
         icon: 'code',
-        title: 'Toujours extensible',
-        body: 'Envie de contribuer ? Le projet est ouvert : remontez vos idées et améliorations directement sur GitHub.'
+        title: 'Open for contributions',
+        body: 'Want to improve DQD? Share ideas or submit pull requests directly on GitHub.'
       }
     ]
   },
   {
     id: 'profile',
-    navLabel: 'Profil simple',
+    navLabel: 'Simple Profile',
     navIcon: 'table',
     hero: {
-      eyebrow: 'Profil JSON',
-      title: () => 'Analyse simple de profile.json',
-      subtitle: 'Obtenez une vue exportable et filtrable des opérateurs afin d’identifier rapidement les points chauds.'
+      eyebrow: 'Profile JSON',
+      title: () => 'Simple profile.json analysis',
+      subtitle: 'Generate a filterable and exportable operator view to surface hotspots quickly.'
     },
     form: {
       id: 'simple-profile-form',
-      title: 'Téléverser un profil',
-      description:
-        'Ajoutez un fichier profile.json (brut ou compressé) pour générer un rapport synthétique, prêt à être partagé.',
+      title: 'Upload a profile',
+      description: 'Provide a raw or compressed profile.json to create a concise report that is easy to share.',
       action: '/simple-profile',
       method: 'POST',
       encType: 'multipart/form-data',
-      buttonText: 'Analyser le profil',
+      buttonText: 'Analyze profile',
       buttonIcon: 'play_arrow',
       fields: [
         {
           type: 'file',
           name: 'profile1',
-          label: 'Fichier à analyser',
-          helper: 'Formats acceptés : .tar, .gz, .tgz, .zip, .json',
+          label: 'Profile file',
+          helper: 'Accepted formats: .tar, .gz, .tgz, .zip, .json',
           accept: '.tar, .gz, .tgz, .zip, .json',
           requiredCount: 1,
           fullWidth: true,
-          placeholder: 'Aucun fichier sélectionné',
-          buttonLabel: 'Choisir un fichier'
+          placeholder: 'No file selected',
+          buttonLabel: 'Browse'
         }
       ]
     }
   },
   {
     id: 'profile-detailed',
-    navLabel: 'Profil détaillé',
+    navLabel: 'Detailed Profile',
     navIcon: 'insights',
     hero: {
-      eyebrow: 'Profil avancé',
-      title: () => 'Analyse détaillée de profile.json',
-      subtitle:
-        'Approfondissez l’étude des opérateurs : estimations de lignes, consommation par nœud et ressources critiques.'
+      eyebrow: 'Advanced analysis',
+      title: () => 'Detailed profile.json analysis',
+      subtitle: 'Dig into operator-level insights: row estimates, per-node resource usage and critical hotspots.'
     },
     form: {
       id: 'detailed-profile-form',
-      title: 'Lancer une analyse détaillée',
-      description:
-        'Identifiez les opérateurs les plus coûteux et les éventuels déséquilibres de ressources en fournissant un profile.json complet.',
+      title: 'Run a detailed analysis',
+      description: 'Upload the full profile.json to pinpoint costly operators and resource imbalances.',
       action: '/profile',
       method: 'POST',
       encType: 'multipart/form-data',
-      buttonText: 'Analyser en profondeur',
+      buttonText: 'Analyze in depth',
       buttonIcon: 'analytics',
       fields: [
         {
           type: 'file',
           name: 'profile1',
-          label: 'Fichier profil',
-          helper: 'Formats acceptés : .tar, .gz, .tgz, .zip, .json',
+          label: 'Profile file',
+          helper: 'Accepted formats: .tar, .gz, .tgz, .zip, .json',
           accept: '.tar, .gz, .tgz, .zip, .json',
           requiredCount: 1,
           fullWidth: true,
-          placeholder: 'Aucun fichier sélectionné',
-          buttonLabel: 'Joindre un profile.json'
+          placeholder: 'No file selected',
+          buttonLabel: 'Browse'
         }
       ]
     }
   },
   {
     id: 'profiles-comparison',
-    navLabel: 'Comparer des profils',
+    navLabel: 'Profile Comparison',
     navIcon: 'compare_arrows',
     hero: {
-      eyebrow: 'Diff & évolution',
-      title: () => 'Comparaison de deux profiles',
-      subtitle:
-        'Mesurez l’évolution des plans d’exécution, repérez les régressions de performance et les différences d’opérateur.'
+      eyebrow: 'Diff and evolution',
+      title: () => 'Compare two profiles',
+      subtitle: 'Measure execution plan changes, highlight regressions, and spot operator differences between runs.'
     },
     form: {
       id: 'detailed-profiles-form',
-      title: 'Comparer deux exécutions',
-      description:
-        'Téléversez deux profils pour générer un rapport de différences mettant en évidence les changements majeurs.',
+      title: 'Compare two executions',
+      description: 'Upload two profile files to generate a difference report that emphasises meaningful changes.',
       action: '/profiles',
       method: 'POST',
       encType: 'multipart/form-data',
-      buttonText: 'Comparer',
+      buttonText: 'Compare profiles',
       buttonIcon: 'sync_alt',
       fields: [
         {
           type: 'file',
           name: 'compare_profile',
-          label: 'Profils à comparer',
-          helper: 'Sélectionnez exactement deux fichiers : .tar, .gz, .tgz, .zip, .json',
+          label: 'Profiles to compare',
+          helper: 'Select exactly two files: .tar, .gz, .tgz, .zip, .json',
           accept: '.tar, .gz, .tgz, .zip, .json',
           requiredCount: 2,
           multiple: true,
           fullWidth: true,
-          placeholder: 'Aucun fichier sélectionné',
-          buttonLabel: 'Choisir deux fichiers'
+          placeholder: 'No file selected',
+          buttonLabel: 'Select files'
         }
       ]
     }
   },
   {
     id: 'queries-json',
-    navLabel: 'Queries.json',
+    navLabel: 'Queries JSON',
     navIcon: 'equalizer',
     hero: {
-      eyebrow: 'Analyse requêtes',
-      title: () => 'Étude de queries.json',
-      subtitle:
-        'Synthétisez des dizaines de jours d’activité : débordements, goulots d’étranglement, sessions les plus coûteuses.'
+      eyebrow: 'Query analytics',
+      title: () => 'Analyze queries.json',
+      subtitle: 'Summarise days or weeks of workload: discover bottlenecks, heavy sessions and failure patterns.'
     },
     form: {
       id: 'detailed-queries-form',
-      title: 'Configurer l’analyse de requêtes',
-      description:
-        'Limitez éventuellement la plage temporelle et le nombre de résultats pour générer un rapport ciblé.',
+      title: 'Configure the analysis',
+      description: 'Optionally narrow the time range and result limits to focus on the most relevant queries.',
       action: '/queriesjson',
       method: 'POST',
       encType: 'multipart/form-data',
-      buttonText: 'Analyser les requêtes',
+      buttonText: 'Analyze queries',
       buttonIcon: 'query_stats',
       fields: [
         {
           type: 'date',
           name: 'start_date',
-          label: 'Date de début',
-          helper: 'Filtrer les requêtes qui commencent après cette date',
+          label: 'Start date',
+          helper: 'Filter queries that start after this date',
           defaultValue: () => oneHundredTwentyDaysAgo()
         },
         {
           type: 'time',
           name: 'start_time',
-          label: 'Heure de début',
-          helper: 'Filtrer les requêtes qui commencent après cette heure',
+          label: 'Start time',
+          helper: 'Filter queries that start after this time',
           defaultValue: '00:00'
         },
         {
           type: 'date',
           name: 'end_date',
-          label: 'Date de fin',
-          helper: 'Filtrer les requêtes qui se terminent avant cette date',
+          label: 'End date',
+          helper: 'Filter queries that finish before this date',
           defaultValue: () => tomorrowDate()
         },
         {
           type: 'time',
           name: 'end_time',
-          label: 'Heure de fin',
-          helper: 'Filtrer les requêtes qui finissent avant cette heure',
+          label: 'End time',
+          helper: 'Filter queries that finish before this time',
           defaultValue: '00:00'
         },
         {
           type: 'select',
           name: 'limit',
-          label: 'Nombre maximum par catégorie',
-          helper:
-            'Plus la limite est élevée, plus le rapport est détaillé (et potentiellement plus long à générer).',
+          label: 'Maximum per category',
+          helper: 'Larger limits increase report detail but may take longer to generate.',
           defaultValue: '5',
           options: [
             { value: '1', label: '1' },
@@ -224,13 +216,13 @@ export const SECTIONS: Section[] = [
         {
           type: 'select',
           name: 'window',
-          label: 'Taille de fenêtre',
-          helper: 'Définissez la granularité des agrégats temporels.',
+          label: 'Aggregation window',
+          helper: 'Choose the time bucket size used for temporal aggregations.',
           defaultValue: '60000',
           options: [
-            { value: '1000', label: '1 seconde' },
+            { value: '1000', label: '1 second' },
             { value: '60000', label: '1 minute' },
-            { value: '86400000', label: '1 jour' }
+            { value: '86400000', label: '1 day' }
           ]
         },
         {
@@ -241,60 +233,57 @@ export const SECTIONS: Section[] = [
         {
           type: 'file',
           name: 'queriesjson',
-          label: 'Archive queries.json',
-          helper:
-            'Formats acceptés : .tar, .tar.gz, .tgz, .tar.xz, .tar.bzip2, .bzip2, .gz, .zip, .json',
+          label: 'queries.json archive',
+          helper: 'Accepted formats: .tar, .tar.gz, .tgz, .tar.xz, .tar.bzip2, .bzip2, .gz, .zip, .json',
           accept: '.tar, .tar.gz, .tgz, .tar.xz, .tar.bzip2, .bzip2, .gz, .zip, .json',
           requiredCount: 1,
           fullWidth: true,
-          placeholder: 'Aucun fichier sélectionné',
-          buttonLabel: 'Choisir un fichier queries.json'
+          placeholder: 'No file selected',
+          buttonLabel: 'Select file'
         }
       ]
     }
   },
   {
     id: 'schema',
-    navLabel: 'Schéma & repro',
+    navLabel: 'Schema & Reproduction',
     navIcon: 'schema',
     hero: {
       eyebrow: 'Reproduction',
-      title: () => 'Générateur de schémas & scripts',
-      subtitle:
-        'Produisez des scripts d’initialisation pour recréer les sources, PDS et VDS observés dans un profile.json.'
+      title: () => 'Schema generator and scripts',
+      subtitle: 'Produce ready-to-run scripts to recreate sources, PDS and VDS referenced in a profile.json.'
     },
     form: {
       id: 'schema-form',
-      title: 'Préparer la génération de schémas',
-      description:
-        'Personnalisez la taille des jeux de données et les paramètres de création avant de déposer votre profile.json.',
+      title: 'Prepare schema generation',
+      description: 'Customize dataset sizes and creation parameters before submitting your profile.json.',
       action: '/reproduction',
       method: 'POST',
       encType: 'multipart/form-data',
-      buttonText: 'Générer les scripts',
+      buttonText: 'Generate scripts',
       buttonIcon: 'construction',
       fields: [
         {
           type: 'text',
           inputType: 'number',
           name: 'records',
-          label: 'Nombre de lignes par PDS',
-          helper: 'Utilisé pour créer des échantillons de tables.',
+          label: 'Rows per PDS',
+          helper: 'Used when creating sample tables.',
           defaultValue: '20'
         },
         {
           type: 'text',
           inputType: 'number',
           name: 'timeout',
-          label: 'Timeout (secondes)',
-          helper: 'Temps maximal alloué à la création des objets.',
+          label: 'Timeout (seconds)',
+          helper: 'Maximum time allowed while creating objects.',
           defaultValue: '60'
         },
         {
           type: 'select',
           name: 'defaultCtasFormat',
-          label: 'Format CTAS par défaut',
-          helper: 'Optionnel : force un format spécifique lors des créations CTAS.',
+          label: 'Default CTAS format',
+          helper: 'Optional: override the default CTAS format when generating tables.',
           defaultValue: '',
           options: [
             { value: '', label: 'Default' },
@@ -305,16 +294,15 @@ export const SECTIONS: Section[] = [
         {
           type: 'text',
           name: 'nasPath',
-          label: 'Répertoire source',
-          helper: 'Optionnel : chemin accessible depuis l’ensemble des nœuds.'
+          label: 'Base source directory',
+          helper: 'Optional: path accessible from all nodes.'
         },
         {
           type: 'textarea',
           name: 'columnDefYaml',
-          label: 'Overrides de colonnes (YAML)',
-          helper:
-            'Facultatif : définir des valeurs précises par colonne. Voir exemple ci-dessous.',
-          placeholder: '# Ajoutez ici vos définitions personnalisées',
+          label: 'Column override YAML',
+          helper: 'Optional: specify exact values per column. See the example below.',
+          placeholder: '# Add your custom column definitions here',
           fullWidth: true,
           rows: 8
         },
@@ -322,58 +310,56 @@ export const SECTIONS: Section[] = [
           type: 'file',
           name: 'profile',
           label: 'Profile.json source',
-          helper: 'Formats acceptés : .tar, .gz, .tgz, .zip, .json',
+          helper: 'Accepted formats: .tar, .gz, .tgz, .zip, .json',
           accept: '.tar, .gz, .tgz, .zip, .json',
           requiredCount: 1,
           fullWidth: true,
-          placeholder: 'Aucun fichier sélectionné',
-          buttonLabel: 'Joindre un profile.json'
+          placeholder: 'No file selected',
+          buttonLabel: 'Select file'
         }
       ]
     },
     checklist: [
-      'Téléversez le profile.json (zip ou fichier brut) et patientez jusqu’à réception de l’archive générée.',
-      'Décompressez l’archive et positionnez-vous dans le dossier créé.',
-      'Lancez le script `bash create.sh --host "http://localhost:9047" -u "monuser" -p "monmdp"` pour recréer les objets.',
-      'Consultez `debug.sql` si une étape échoue afin d’identifier les requêtes problématiques.',
-      'Créez manuellement les sources manquantes si nécessaire, puis rejouez le script.'
+      'Upload your profile.json (zip or raw) and wait for the generated archive.',
+      'Extract the archive and switch to the generated directory.',
+      'Run `bash create.sh --host "http://localhost:9047" -u "myuser" -p "mypass"` to recreate the objects.',
+      'Review `debug.sql` if a step fails to identify problematic statements.',
+      'Create any missing sources manually if required, then rerun the script.'
     ],
     codeSample: {
-      title: 'Exemple de surcharge YAML',
+      title: 'Sample column override YAML',
       code: `tables:\n  - name: '"ns 1".table1'\n    columns:\n      - name: status\n        values: [Active, Inactive, Suspended]\n      - name: customerType\n        values: [Silver, Gold, Platinum]`
     }
   },
   {
     id: 'iostat-analysis',
-    navLabel: 'Analyse IOStat',
+    navLabel: 'IOStat Analysis',
     navIcon: 'monitoring',
     hero: {
-      eyebrow: 'Système',
-      title: () => 'Analyser la sortie IOStat',
-      subtitle:
-        'Repérez les saturations de disques et anomalies système en important la sortie `iostat -x -c -d -t 1 600`.'
+      eyebrow: 'System',
+      title: () => 'Analyze IOStat output',
+      subtitle: 'Detect disk saturation and system anomalies from `iostat -x -c -d -t 1 600` output.'
     },
     form: {
       id: 'iostat-form',
-      title: 'Téléverser votre sortie IOStat',
-      description:
-        'Le rapport mettra en avant les pics d’attente disque, la latence et la saturation par device.',
+      title: 'Upload IOStat output',
+      description: 'The report highlights wait times, latency and per-device saturation.',
       action: '/iostat',
       method: 'POST',
       encType: 'multipart/form-data',
-      buttonText: 'Analyser IOStat',
+      buttonText: 'Analyze IOStat',
       buttonIcon: 'monitor_heart',
       fields: [
         {
           type: 'file',
           name: 'iostatfile',
-          label: 'Fichier IOStat',
-          helper: 'Utilisez idéalement la commande : iostat -x -c -d -t 1 600',
+          label: 'IOStat file',
+          helper: 'Ideally captured with: iostat -x -c -d -t 1 600',
           accept: '.txt, .log, .out',
           requiredCount: 1,
           fullWidth: true,
-          placeholder: 'Aucun fichier sélectionné',
-          buttonLabel: 'Sélectionner un fichier'
+          placeholder: 'No file selected',
+          buttonLabel: 'Select file'
         }
       ]
     }
@@ -383,32 +369,30 @@ export const SECTIONS: Section[] = [
     navLabel: 'Threaded Top',
     navIcon: 'vertical_align_top',
     hero: {
-      eyebrow: 'CPU & Threads',
-      title: () => 'Analyse threaded top',
-      subtitle:
-        'Appelez ce module avec la sortie DDC `LINES=100 top -H -n 120 -p 1 -d 2 -bw` pour déceler les threads dominants.'
+      eyebrow: 'CPU and threads',
+      title: () => 'Analyze threaded top output',
+      subtitle: 'Use the DDC command `LINES=100 top -H -n 120 -p 1 -d 2 -bw` to capture dominant threads.'
     },
     form: {
       id: 'top-form',
-      title: 'Fichier threaded top',
-      description:
-        'Identifiez les threads les plus consommateurs et les évolutions de charge de votre service.',
+      title: 'Upload threaded top file',
+      description: 'Identify the busiest threads and understand how workload evolves over time.',
       action: '/ttop',
       method: 'POST',
       encType: 'multipart/form-data',
-      buttonText: 'Analyser le fichier',
+      buttonText: 'Analyze file',
       buttonIcon: 'stacked_bar_chart',
       fields: [
         {
           type: 'file',
           name: 'ttop',
-          label: 'Capture top',
-          helper: 'Recommandé : LINES=100 top -H -n 120 -p 1 -d 2 -bw',
+          label: 'top capture',
+          helper: 'Recommended flags: LINES=100 top -H -n 120 -p 1 -d 2 -bw',
           accept: '.txt, .log, .out',
           requiredCount: 1,
           fullWidth: true,
-          placeholder: 'Aucun fichier sélectionné',
-          buttonLabel: 'Sélectionner un fichier'
+          placeholder: 'No file selected',
+          buttonLabel: 'Select file'
         }
       ]
     }
