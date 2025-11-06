@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log/slog"
 	"mime/multipart"
 	"path/filepath"
 	"strings"
@@ -71,10 +72,21 @@ func ExtractFromZip(data []byte) ([]ExtractedFile, error) {
 			return nil, fmt.Errorf("failed to open file in zip: %w", err)
 		}
 
-		content, err := io.ReadAll(rc)
-		rc.Close()
-		if err != nil {
-			return nil, fmt.Errorf("failed to read file in zip: %w", err)
+		content, readErr := io.ReadAll(rc)
+
+		// Always close and handle the error
+		if closeErr := rc.Close(); closeErr != nil {
+			slog.Error("failed to close file in zip",
+				"filename", file.Name,
+				"error", closeErr,
+			)
+			if readErr == nil {
+				return nil, fmt.Errorf("closing file in zip: %w", closeErr)
+			}
+		}
+
+		if readErr != nil {
+			return nil, fmt.Errorf("failed to read file in zip: %w", readErr)
 		}
 
 		files = append(files, ExtractedFile{
@@ -87,14 +99,23 @@ func ExtractFromZip(data []byte) ([]ExtractedFile, error) {
 }
 
 // ExtractFromTarGZ extracts files from a .tar.gz archive
-func ExtractFromTarGZ(data []byte) ([]ExtractedFile, error) {
+func ExtractFromTarGZ(data []byte) (files []ExtractedFile, err error) {
 	gzReader, err := gzip.NewReader(strings.NewReader(string(data)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open gzip: %w", err)
 	}
-	defer gzReader.Close()
 
-	return extractFromTar(gzReader)
+	defer func() {
+		if closeErr := gzReader.Close(); closeErr != nil {
+			slog.Error("failed to close gzip reader", "error", closeErr)
+			if err == nil {
+				err = fmt.Errorf("closing gzip reader: %w", closeErr)
+			}
+		}
+	}()
+
+	files, err = extractFromTar(gzReader)
+	return files, err
 }
 
 // ExtractFromTar extracts files from a .tar archive
@@ -135,14 +156,22 @@ func extractFromTar(reader io.Reader) ([]ExtractedFile, error) {
 }
 
 // ExtractFromGZ extracts a single file from a .gz archive
-func ExtractFromGZ(data []byte) ([]byte, error) {
+func ExtractFromGZ(data []byte) (content []byte, err error) {
 	gzReader, err := gzip.NewReader(strings.NewReader(string(data)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open gzip: %w", err)
 	}
-	defer gzReader.Close()
 
-	content, err := io.ReadAll(gzReader)
+	defer func() {
+		if closeErr := gzReader.Close(); closeErr != nil {
+			slog.Error("failed to close gzip reader", "error", closeErr)
+			if err == nil {
+				err = fmt.Errorf("closing gzip reader: %w", closeErr)
+			}
+		}
+	}()
+
+	content, err = io.ReadAll(gzReader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read gzip content: %w", err)
 	}
@@ -152,16 +181,27 @@ func ExtractFromGZ(data []byte) ([]byte, error) {
 
 // ProcessUploadedFile handles an uploaded file and returns its content
 // If it's an archive, it extracts and returns the first profile.json found
-func ProcessUploadedFile(fileHeader *multipart.FileHeader) ([]byte, string, error) {
+func ProcessUploadedFile(fileHeader *multipart.FileHeader) (data []byte, filename string, err error) {
 	file, err := fileHeader.Open()
 	if err != nil {
-		return nil, "", fmt.Errorf("failed to open uploaded file: %w", err)
+		return nil, "", fmt.Errorf("opening uploaded file: %w", err)
 	}
-	defer file.Close()
 
-	data, err := io.ReadAll(file)
+	defer func() {
+		if closeErr := file.Close(); closeErr != nil {
+			slog.Error("failed to close uploaded file",
+				"filename", fileHeader.Filename,
+				"error", closeErr,
+			)
+			if err == nil {
+				err = fmt.Errorf("closing uploaded file: %w", closeErr)
+			}
+		}
+	}()
+
+	data, err = io.ReadAll(file)
 	if err != nil {
-		return nil, "", fmt.Errorf("failed to read uploaded file: %w", err)
+		return nil, "", fmt.Errorf("reading uploaded file: %w", err)
 	}
 
 	fileType := DetectFileType(fileHeader.Filename)

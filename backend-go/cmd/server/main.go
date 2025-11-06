@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -37,9 +37,10 @@ func main() {
 		IdleTimeout:  defaultIdleTimeout,
 	}
 
-	log.Printf("Starting DQD server on port %s...", port)
+	slog.Info("starting DQD server", "port", port, "version", "0.12.3")
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+		slog.Error("server failed to start", "error", err)
+		os.Exit(1)
 	}
 }
 
@@ -71,7 +72,9 @@ func setupRouter() *chi.Mux {
 	// Health check
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		if _, err := w.Write([]byte("OK")); err != nil {
+			slog.Error("failed to write health check response", "error", err)
+		}
 	})
 
 	return r

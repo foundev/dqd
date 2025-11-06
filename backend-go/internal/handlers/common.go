@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 )
 
@@ -13,12 +14,20 @@ type ErrorResponse struct {
 
 // WriteError writes an error response
 func WriteError(w http.ResponseWriter, message string, statusCode int) {
+	slog.Warn("returning error response",
+		"status", statusCode,
+		"message", message,
+	)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(ErrorResponse{
+
+	if err := json.NewEncoder(w).Encode(ErrorResponse{
 		Error:   http.StatusText(statusCode),
 		Message: message,
-	})
+	}); err != nil {
+		slog.Error("failed to encode error response", "error", err)
+	}
 }
 
 // NotImplemented returns a handler that responds with 501 Not Implemented
