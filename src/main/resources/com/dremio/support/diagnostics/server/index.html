@@ -1,495 +1,1410 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <title>DQD Analysis page</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="google" content="notranslate">
-    <link rel="shortcut icon" type="image/png" href="/img/favicon-small.png" />
-    <link href="https://cdn.jsdelivr.net/npm/beercss@3.0.8/dist/cdn/beer.min.css" rel="stylesheet">
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.0.8/dist/cdn/beer.min.js"></script>
-    <script type="module"
-        src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@0.1.5/dist/cdn/material-dynamic-colors.min.js"></script>
-    <style>
-        :root,
-        body.light {
-            --primary: #006493;
-            --on-primary: #ffffff;
-            --primary-container: #cae6ff;
-            --on-primary-container: #001e30;
-            --secondary: #50606e;
-            --on-secondary: #ffffff;
-            --secondary-container: #d3e5f5;
-            --on-secondary-container: #0c1d29;
-            --tertiary: #65587b;
-            --on-tertiary: #ffffff;
-            --tertiary-container: #ebddff;
-            --on-tertiary-container: #201634;
-            --error: #ba1a1a;
-            --on-error: #ffffff;
-            --error-container: #ffdad6;
-            --on-error-container: #410002;
-            --background: #fcfcff;
-            --on-background: #1a1c1e;
-            --surface: #fcfcff;
-            --on-surface: #1a1c1e;
-            --surface-variant: #dde3ea;
-            --on-surface-variant: #41474d;
-            --outline: #72787e;
-            --outline-variant: #c1c7ce;
-            --scrim: #000000;
-            --inverse-surface: #2e3133;
-            --inverse-on-surface: #f0f0f3;
-            --inverse-primary: #8dcdff;
-        }
-    </style>
-    <script>
-        async function setVersion() {
-            const response = await fetch("/about.json");
-            const aboutJson = await response.json();
-            console.log(aboutJson);
-            const version = aboutJson["version"];
-            document.querySelectorAll('.about_version').forEach((h) => h.innerText = "DQD " + version);
-        }
+  <title>DQD Analysis page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="google" content="notranslate">
+  <link rel="shortcut icon" type="image/png" href="/img/favicon-small.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --color-primary: #2563eb;
+      --color-primary-dark: #1d4ed8;
+      --color-primary-strong: #162dd9;
+      --color-primary-soft: #eff4ff;
+      --color-background: #f4f7ff;
+      --color-surface: #ffffff;
+      --color-surface-alt: #f8fafc;
+      --color-text: #0f172a;
+      --color-muted: #64748b;
+      --color-border: rgba(148, 163, 184, 0.22);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --shadow-lg: 0 48px 96px -48px rgba(15, 23, 42, 0.65);
+      --shadow-md: 0 32px 64px -40px rgba(15, 23, 42, 0.50);
+      --shadow-sm: 0 18px 42px -30px rgba(15, 23, 42, 0.35);
+    }
 
-        function showButton(that, numFiles, buttonId) {
-            let filesSelected = that.files.length
-            if (filesSelected === numFiles) {
-                document.querySelector('#' + buttonId).disabled = false;
-            } else {
-                document.querySelector('#' + buttonId).disabled = true;
-            }
-        };
-        function showLoader() {
-            document.getElementById("loader").classList.add('active');
-        };
-        window.addEventListener("pageshow", () => {
-            setVersion();
-            document.getElementById("loader").className = 'modal';
-            const theDate120DaysAgo = new Date();
-            theDate120DaysAgo.setDate(theDate120DaysAgo.getDate() - 120);
+    * {
+      box-sizing: border-box;
+    }
 
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #f8fbff 0%, #edf1ff 100%);
+      color: var(--color-text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
 
-            const startDatePicker = document.getElementById("start-date-queries")
-            const startDate = theDate120DaysAgo.toISOString().substring(0, 10);
-            startDatePicker.value = startDate;
-            document.getElementById("end-date-queries").value = tomorrow.toISOString().substring(0, 10);
-        });
-    </script>
-    <style>
-        section:not(:target):not(#home),
-        section:target~#home {
-            display: none;
-        }
-    </style>
+    body, button, input, select, textarea {
+      font-family: 'Inter', sans-serif;
+    }
+
+    a {
+      color: var(--color-primary-dark);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .material-symbols-rounded {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+
+    #root {
+      min-height: 100vh;
+    }
+
+    .app-shell {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(237, 241, 255, 0.88) 100%);
+    }
+
+    .sidebar {
+      width: 288px;
+      background: radial-gradient(circle at top, #16213c 10%, #0f172a 70%);
+      color: #e2e8f0;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      position: fixed;
+      inset: 0 auto 0 0;
+      transform: translateX(-100%);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      z-index: 30;
+      box-shadow: 0 24px 60px -32px rgba(15, 23, 42, 0.65);
+    }
+
+    .sidebar--open {
+      transform: translateX(0);
+    }
+
+    .sidebar__header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar__product {
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+
+    .sidebar__tagline {
+      font-size: 0.85rem;
+      color: rgba(226, 232, 240, 0.7);
+    }
+
+    .sidebar__version {
+      font-size: 0.8rem;
+      color: rgba(148, 163, 184, 0.85);
+    }
+
+    .sidebar__nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar__link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: inherit;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .sidebar__link:hover {
+      background: rgba(148, 163, 184, 0.15);
+      transform: translateX(4px);
+    }
+
+    .sidebar__link.is-active {
+      background: rgba(59, 130, 246, 0.25);
+      color: #fff;
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.35);
+    }
+
+    .sidebar__footer {
+      margin-top: auto;
+      font-size: 0.88rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.15);
+      padding-top: 18px;
+      color: rgba(209, 213, 219, 0.85);
+    }
+
+    .sidebar__footer a {
+      color: #60a5fa;
+      font-weight: 500;
+    }
+
+    .main {
+      flex: 1;
+      width: 100%;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 16px;
+      z-index: 12;
+    }
+
+    .topbar__title {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .topbar__product {
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .topbar__version {
+      font-size: 0.78rem;
+      color: var(--color-muted);
+    }
+
+    .icon-button {
+      border: none;
+      background: var(--color-surface);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: var(--color-text);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .icon-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px -24px rgba(15, 23, 42, 0.4);
+    }
+
+    .main__content {
+      max-width: 1120px;
+      width: 100%;
+      margin: 0 auto;
+      padding-bottom: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .section__hero {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(145deg, rgba(37, 99, 235, 0.14) 0%, rgba(99, 102, 241, 0.08) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.18);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section__eyebrow {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-weight: 600;
+      color: var(--color-muted);
+      margin: 0;
+    }
+
+    .section__hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.6rem);
+      line-height: 1.15;
+    }
+
+    .section__hero p {
+      margin: 0;
+      color: var(--color-muted);
+      font-size: 1rem;
+      max-width: 760px;
+    }
+
+    .feature-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .feature-card {
+      background: var(--color-surface);
+      padding: 24px 22px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(59, 130, 246, 0.02) 70%);
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card:hover::after {
+      opacity: 1;
+    }
+
+    .feature-card__icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--color-primary-dark);
+    }
+
+    .feature-card h3 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: 0.93rem;
+      color: var(--color-muted);
+    }
+
+    .upload-form {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: 34px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .upload-form__header {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .upload-form__header h2 {
+      margin: 0;
+      font-size: 1.55rem;
+    }
+
+    .upload-form__header p {
+      margin: 0;
+      color: var(--color-muted);
+      font-size: 0.95rem;
+      max-width: 780px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px 20px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-field--full {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      color: var(--color-text);
+    }
+
+    .form-input,
+    .form-input input,
+    .form-input select,
+    .form-input textarea {
+      width: 100%;
+    }
+
+    input,
+    select,
+    textarea {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: var(--color-surface-alt);
+      padding: 13px 14px;
+      font-size: 0.95rem;
+      color: var(--color-text);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(37, 99, 235, 0.85);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+      background: var(--color-surface);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-helper {
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      line-height: 1.4;
+    }
+
+    .file-upload {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.04) 100%);
+      border: 1px dashed rgba(37, 99, 235, 0.4);
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .file-upload:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37, 99, 235, 0.75);
+      box-shadow: 0 22px 45px -34px rgba(37, 99, 235, 0.65);
+    }
+
+    .file-upload__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.18);
+      display: grid;
+      place-items: center;
+      color: var(--color-primary-dark);
+      flex-shrink: 0;
+    }
+
+    .file-upload__text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .file-upload__title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .file-upload__subtitle {
+      font-size: 0.82rem;
+      color: var(--color-muted);
+      word-break: break-word;
+    }
+
+    .file-upload__input {
+      display: none;
+    }
+
+    .upload-form__footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 16px;
+      border: none;
+      padding: 14px 26px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 24px 48px -30px rgba(37, 99, 235, 0.75);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .primary-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 32px 52px -28px rgba(37, 99, 235, 0.85);
+    }
+
+    .primary-button:disabled {
+      background: rgba(148, 163, 184, 0.65);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .section__checklist {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section__checklist h2 {
+      margin: 0;
+    }
+
+    .section__checklist ol {
+      margin: 0;
+      padding-left: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      color: var(--color-muted);
+    }
+
+    .code-card {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .code-card__header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    pre {
+      margin: 0;
+      background: rgba(15, 23, 42, 0.65);
+      padding: 18px;
+      border-radius: 14px;
+      overflow-x: auto;
+    }
+
+    code {
+      font-family: "SFMono-Regular", "Consolas", "Menlo", monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      display: block;
+    }
+
+    .loader-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.46);
+      display: grid;
+      place-items: center;
+      z-index: 60;
+      backdrop-filter: blur(4px);
+    }
+
+    .loader-card {
+      background: var(--color-surface);
+      padding: 28px 32px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      max-width: 320px;
+    }
+
+    .spinner {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 5px solid rgba(37, 99, 235, 0.18);
+      border-top-color: var(--color-primary);
+      animation: spin 1.05s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 1024px) {
+      .sidebar {
+        transform: none;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+      }
+
+      .main {
+        margin-left: 288px;
+        padding: 48px;
+        gap: 32px;
+      }
+
+      .topbar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .main {
+        padding: 16px;
+      }
+
+      .section__hero {
+        padding: 24px;
+      }
+
+      .upload-form {
+        padding: 24px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .upload-form__footer {
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <nav class="left m l">
-        <a href="#">
-            <i>home</i>
-            <div>Home</div>
-        </a>
-        <a href="#profile">
-            <i>table_rows</i>
-            <div>Simple Profile Analysis</div>
-        </a>
-        <a href="#profile-detailed">
-            <i>equalizer</i>
-            <div>Detailed Profile Analysis</div>
-        </a>
-        <a href="#profiles-comparison">
-            <i>compare_arrows</i>
-            <div>Profile Comparison</div>
-        </a>
-        <a href="#queries-json">
-            <i>equalizer</i>
-            <div>Queries.json Analysis</div>
-        </a>
-        <a href="#schema">
-            <i>database</i>
-            <div>Schema Generation</div>
-        </a>
-        <a href="#iostat-analysis">
-            <i>computer</i>
-            <div>IOStat</div>
-        </a>
-        <a href="#top-analysis">
-            <i>vertical_align_top</i>
-            <div>Threaded Top</div>
-        </a>
-    </nav>
-    <main class="responsive">
-        <section id="queries-json">
-            <header class="responsive">
-                <nav>
-                    <h4 class="max center-align about_version">DQD </h4>
-                </nav>
-            </header>
-            <article class="fill">
-                <h5>Queries.JSON Tool Purpose</h5>
-                <p>Queries.json file analysis and summary, for maximum report resolution limit files to a day, 30 days
-                    now officially supported</p>
-            </article>
-            <article class="fill">
-                <h5>Upload Form</h5>
-                <form id="detailed-queries-form" method="POST" enctype="multipart/form-data" action="/queriesjson">
-                    <caption>Detailed Report</caption>
-                    <fieldset>
-                        <div class="grid">
-                            <div class="s3">
-                                <div class="field label prefix border classic-report">
-                                    <input id="start-date-queries" type="date" name="start_date" />
-                                    <label>Start Date</label>
-                                    <i>today</i>
-                                    <span class="helper">filter queries that start before this date</span>
-                                </div>
-                            </div>
-                            <div class="s3">
-                                <div class="field label prefix border classic-report">
-                                    <i>schedule</i>
-                                    <input type="time" name="start_time" value="00:00" />
-                                    <label>Start Time</label>
-                                    <span class="helper">filter queries that start before this time</span>
-                                </div>
-                            </div>
-                            <div class="s3">
-                                <div class="field label prefix border classic-report">
-                                    <input id="end-date-queries" type="date" name="end_date" />
-                                    <label>End Date</label>
-                                    <i>today</i>
-                                    <span class="helper">filter queries that start after this date</span>
-                                </div>
-                            </div>
-                            <div class="s3">
-                                <div class="field label prefix border classic-report">
-                                    <i>schedule</i>
-                                    <input type="time" name="end_time" value="00:00" />
-                                    <label>End Time</label>
-                                    <span class="helper">filter queries that end after this time</span>
-                                </div>
-                            </div>
-                            <div class="s6">
-                                <div class="field prefix border classic-report">
-                                    <select name="limit">
-                                        <option value="1">1 </option>
-                                        <option default value="5">5</option>
-                                        <option value="25">25</option>
-                                        <option value="100">100</option>
-                                        <option value="1000">1000</option>
-                                    </select><i>arrow_drop_down</i>
-                                    <span class="helper">number of problematic queries per category (more is
-                                        slower)</span>
-                                </div>
+  <div id="root"></div>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
 
-                            </div>
-                            <div class="s6">
-                                <div class="field prefix border classic-report">
-                                    <select name="window">
-                                        <option value="1000">1 Second</option>
-                                        <option selected="selected" value="60000">1 Minute</option>
-                                        <option value="86400000">Daily</option>
-                                    </select><i>arrow_drop_down</i>
-                                    <span class="helper">Bucket size</span>
-                                </div>
-                            </div>
-                            <div class="s12">
-                                <input name="query_report_type" type="hidden" value="INTERACTIVE" />
-                                <div class="field label prefix suffix border">
-                                    <i>attach_file</i>
-                                    <input type="text">
-                                    <input type="file" name="queriesjson" accept=".tar, .tar.gz, .tgz, tar.xz, tar.bzip2, .bzip2, .gz, .zip, .json"
-                                        onchange="showButton(this, 1, 'detailed-queriesjson-btn');">
-                                    <label>Queries.json (text file, .tar, .tar.gz, .tgz, tar.xz, tar.bzip2, .bzip2, .gz, .zip, .json)</label>
-                                    <span class="helper">attach one profile in an archive file or as raw
-                                        text</span>
-                                    <i>attach_file</i>
-                                </div>
-                            </div>
-                        </div>
-                        <button id="detailed-queriesjson-btn" disabled onclick="showLoader();">analyze</button>
-                    </fieldset>
-                </form>
-            </article>
-        </section>
-        <section id="profiles-comparison">
-            <header class="responsive">
-                <nav>
-                    <h4 class="max center-align about_version">DQD </h4>
-                </nav>
-            </header>
-            <article class="fill">
-                <h5>Profile Comparison Tool Purpose</h5>
-                <p>Quickly compare 2 profile.json files against one another</p>
-            </article>
+    const formatDateForInput = (date) => {
+      const tzOffset = date.getTimezoneOffset() * 60000;
+      const localISOTime = new Date(date.getTime() - tzOffset).toISOString();
+      return localISOTime.split('T')[0];
+    };
 
-            <article class="fill">
-                <h5>Upload Form</h5>
-                <form id="detailed-profiles-form" method="POST" enctype="multipart/form-data" action="/profiles">
-                    <caption>Detailed Report</caption>
-                    <fieldset>
-                        <div class="field label prefix suffix border">
-                            <i>attach_file</i>
-                            <input type="text">
-                            <input type="file" name="compare_profile" multiple="multiple"
-                                accept=".tar, .gz, .tgz, .zip, .json"
-                                onchange="showButton(this, 2, 'detailed-profiles-btn');">
-                            <label>Select 2 profile.json or archive files</label>
-                            <span class="helper">attach two profiles in separate text or archive files (*.tar, *.gz.,
-                                *.tgz, *.zip)</span>
-                            <i>attach_file</i>
-                        </div>
-                        <button id="detailed-profiles-btn" disabled onclick="showLoader();">compare</button>
-                    </fieldset>
-                </form>
-            </article>
-        </section>
-        <section id="profile">
-            <header class="responsive">
-                <nav>
-                    <h4 class="max center-align about_version">DQD </h4>
-                </nav>
-            </header>
-            <article class="fill">
-                <h5>Single Profile Tool Purpose</h5>
-                <p>Searchable, Sortable, Exportable view of all Operators</p>
-            </article>
-            <article class="fill">
-                <h5>Upload Form</h5>
-                <form id="simple-profile-form" method="POST" enctype="multipart/form-data" action="/simple-profile">
-                    <caption>Summary Report</caption>
-                    <fieldset>
-                        <div class="field label prefix suffix border">
-                            <i>attach_file</i>
-                            <input type="text">
-                            <input type="file" name="profile1" accept=".tar, .gz, .tgz, .zip, .json"
-                                onchange="showButton(this, 1, 'simple-profile-btn');">
-                            <label>Profiles</label>
-                            <span class="helper">attach one profile in separate text or archive files (*.tar, *.gz.,
-                                *.tgz, *.zip)</span>
-                            <i>attach_file</i>
-                        </div>
+    const oneHundredTwentyDaysAgo = () => {
+      const date = new Date();
+      date.setDate(date.getDate() - 120);
+      return formatDateForInput(date);
+    };
 
-                        <button id="simple-profile-btn" disabled onclick="showLoader();">analyze</button>
-                    </fieldset>
-                </form>
-            </article>
-        </section>
-        <section id="profile-detailed">
-            <header class="responsive">
-                <nav>
-                    <h4 class="max center-align about_version">DQD </h4>
-                </nav>
-            </header>
-            <article class="fill">
-                <h5>Single Profile Tool Purpose</h5>
-                <p>In depth review of a profile, row estimates, node level operator resource usage</p>
-            </article>
-            <article class="fill">
-                <h5>Upload Form</h5>
-                <form id="detailed-profile-form" method="POST" enctype="multipart/form-data"
-                    action="/profile">
-                    <caption>Detailed Report</caption>
-                    <fieldset>
-                        <div class="field label prefix suffix border">
-                            <i>attach_file</i>
-                            <input type="text">
-                            <input type="file" name="profile1" accept=".tar, .gz, .tgz, .zip, .json"
-                                onchange="showButton(this, 1, 'detailed-profile-btn');">
-                            <label>Profiles</label>
-                            <span class="helper">attach one profile in separate text or archive files (*.tar, *.gz.,
-                                *.tgz, *.zip)</span>
-                            <i>attach_file</i>
-                        </div>
-                        <button id="detailed-profile-btn" disabled onclick="showLoader();">analyze</button>
-                    </fieldset>
-                </form>
-            </article>
-        </section>
-        <section id="iostat-analysis">
-            <header class="responsive">
-                <nav>
-                    <h4 class="max center-align about_version">DQD </h4>
-                </nav>
-            </header>
-            <article class="fill">
-                <h5>IOSTAT Analyzer</h5>
-                <p>Using the output of "iostat -x -c -d -t 1 600" we can say a lot of things about a disk or a system</p>
-            </article>
-            <article class="fill">
-                <h5>Upload Form</h5>
-                <form id="iostat-form" method="POST" enctype="multipart/form-data"
-                    action="/iostat">
-                    <caption>IOSTAT Analysis</caption>
-                    <fieldset>
-                        <div class="field label prefix suffix border">
-                            <i>attach_file</i>
-                            <input type="text">
-                            <input type="file" name="iostatfile" 
-                                onchange="showButton(this, 1, 'iostat-btn');">
-                            <label>iostat files</label>
-                            <span class="helper">attach one iostat file run the following flags (-x -c -d -t 1)</span>
-                            <i>attach_file</i>
-                        </div>
-                        <button id="iostat-btn" disabled onclick="showLoader();">analyze</button>
-                    </fieldset>
-                </form>
-            </article>
-        </section>
-        <section id="top-analysis">
-            <header class="responsive">
-                <nav>
-                    <h4 class="max center-align about_version">DQD </h4>
-                </nav>
-            </header>
-            <article class="fill">
-                <h5>thread TOP Analyzer</h5>
-                <p>BETA: Using the output of "LINES=100 top -H -n 120 -p 1 -d 2 -bw" which comes from DDC. We can say a lot about the system, will not work with other top output</p>
-            </article>
-            <article class="fill">
-                <h5>Upload Form</h5>
-                <form id="top-form" method="POST" enctype="multipart/form-data"
-                    action="/ttop">
-                    <caption>Thread TOP Analysis</caption>
-                    <fieldset>
-                        <div class="field label prefix suffix border">
-                            <i>attach_file</i>
-                            <input type="text">
-                            <input type="file" name="ttop" 
-                                onchange="showButton(this, 1, 'ttop-btn');">
-                            <label>ttop.txt</label>
-                            <span class="helper">attach one top file run the following flags (LINES=100 top -H -n 120 -p 1 -d 2 -bw)</span>
-                            <i>attach_file</i>
-                        </div>
-                        <button id="ttop-btn" disabled onclick="showLoader();">analyze</button>
-                    </fieldset>
-                </form>
-            </article>
-        </section>
-        <section id="schema">
-            <header class="responsive">
-                <nav>
-                    <h4 class="max center-align about_version">DQD </h4>
-                </nav>
-            </header>
-            <article class="fill">
-                <h5>Schema Generator Tool Purpose</h5>
-                <p>Also known as the <b>reproduction tool</b>, it will creates scripts that one can use to recreate the
-                    sources, PDS and VDS used in the profile.json.
-            </article>
+    const tomorrowDate = () => {
+      const date = new Date();
+      date.setDate(date.getDate() + 1);
+      return formatDateForInput(date);
+    };
 
-            <article class="fill">
-                <h5>Directions - Schema Generator</h5>
-                <div class="row">
-                    <div>1. Upload profile.json (in zip or extracted) and click upload you will receive a zip file</div>
+    const SECTIONS = [
+      {
+        id: 'home',
+        navLabel: 'Accueil',
+        navIcon: 'dashboard',
+        hero: {
+          eyebrow: 'Bienvenue',
+          title: (version) => version || 'Dremio Query Doctor',
+          subtitle: 'Retrouvez en un seul lieu des diagnostics rapides pour vos fichiers profile.json, queries.json et autres artefacts de support. Téléversez vos fichiers, laissez DQD travailler et accélérez vos analyses.'
+        },
+        cards: [
+          {
+            icon: 'rocket_launch',
+            title: 'Analyses en quelques minutes',
+            body: 'Déposez vos fichiers collectés et obtenez des rapports lisibles pour accélérer les investigations.'
+          },
+          {
+            icon: 'travel_explore',
+            title: 'Vue d’ensemble claire',
+            body: 'Naviguez par thématique : profils simples ou détaillés, comparaisons, requêtes, IOstat et plus encore.'
+          },
+          {
+            icon: 'hub',
+            title: 'Un workflow guidé',
+            body: 'Chaque page rappelle le but de l’outil et ce qu’il faut fournir pour tirer le meilleur du diagnostic.'
+          },
+          {
+            icon: 'code',
+            title: 'Toujours extensible',
+            body: 'Envie de contribuer ? Le projet est ouvert : remontez vos idées et améliorations directement sur GitHub.'
+          }
+        ]
+      },
+      {
+        id: 'profile',
+        navLabel: 'Profil simple',
+        navIcon: 'table',
+        hero: {
+          eyebrow: 'Profil JSON',
+          title: () => 'Analyse simple de profile.json',
+          subtitle: 'Obtenez une vue exportable et filtrable des opérateurs afin d’identifier rapidement les points chauds.'
+        },
+        form: {
+          id: 'simple-profile-form',
+          title: 'Téléverser un profil',
+          description: 'Ajoutez un fichier profile.json (brut ou compressé) pour générer un rapport synthétique, prêt à être partagé.',
+          action: '/simple-profile',
+          method: 'POST',
+          encType: 'multipart/form-data',
+          buttonText: 'Analyser le profil',
+          buttonIcon: 'play_arrow',
+          fields: [
+            {
+              type: 'file',
+              name: 'profile1',
+              label: 'Fichier à analyser',
+              helper: 'Formats acceptés : .tar, .gz, .tgz, .zip, .json',
+              accept: '.tar, .gz, .tgz, .zip, .json',
+              requiredCount: 1,
+              fullWidth: true,
+              placeholder: 'Aucun fichier sélectionné',
+              buttonLabel: 'Choisir un fichier'
+            }
+          ]
+        }
+      },
+      {
+        id: 'profile-detailed',
+        navLabel: 'Profil détaillé',
+        navIcon: 'insights',
+        hero: {
+          eyebrow: 'Profil avancé',
+          title: () => 'Analyse détaillée de profile.json',
+          subtitle: 'Approfondissez l’étude des opérateurs : estimations de lignes, consommation par nœud et ressources critiques.'
+        },
+        form: {
+          id: 'detailed-profile-form',
+          title: 'Lancer une analyse détaillée',
+          description: 'Identifiez les opérateurs les plus coûteux et les éventuels déséquilibres de ressources en fournissant un profile.json complet.',
+          action: '/profile',
+          method: 'POST',
+          encType: 'multipart/form-data',
+          buttonText: 'Analyser en profondeur',
+          buttonIcon: 'analytics',
+          fields: [
+            {
+              type: 'file',
+              name: 'profile1',
+              label: 'Fichier profil',
+              helper: 'Formats acceptés : .tar, .gz, .tgz, .zip, .json',
+              accept: '.tar, .gz, .tgz, .zip, .json',
+              requiredCount: 1,
+              fullWidth: true,
+              placeholder: 'Aucun fichier sélectionné',
+              buttonLabel: 'Joindre un profile.json'
+            }
+          ]
+        }
+      },
+      {
+        id: 'profiles-comparison',
+        navLabel: 'Comparer des profils',
+        navIcon: 'compare_arrows',
+        hero: {
+          eyebrow: 'Diff & évolution',
+          title: () => 'Comparaison de deux profiles',
+          subtitle: 'Mesurez l’évolution des plans d’exécution, repérez les régressions de performance et les différences d’opérateur.'
+        },
+        form: {
+          id: 'detailed-profiles-form',
+          title: 'Comparer deux exécutions',
+          description: 'Téléversez deux profils pour générer un rapport de différences mettant en évidence les changements majeurs.',
+          action: '/profiles',
+          method: 'POST',
+          encType: 'multipart/form-data',
+          buttonText: 'Comparer',
+          buttonIcon: 'sync_alt',
+          fields: [
+            {
+              type: 'file',
+              name: 'compare_profile',
+              label: 'Profils à comparer',
+              helper: 'Sélectionnez exactement deux fichiers : .tar, .gz, .tgz, .zip, .json',
+              accept: '.tar, .gz, .tgz, .zip, .json',
+              requiredCount: 2,
+              multiple: true,
+              fullWidth: true,
+              placeholder: 'Aucun fichier sélectionné',
+              buttonLabel: 'Choisir deux fichiers'
+            }
+          ]
+        }
+      },
+      {
+        id: 'queries-json',
+        navLabel: 'Queries.json',
+        navIcon: 'equalizer',
+        hero: {
+          eyebrow: 'Analyse requêtes',
+          title: () => 'Étude de queries.json',
+          subtitle: 'Synthétisez des dizaines de jours d’activité : débordements, goulots d’étranglement, sessions les plus coûteuses.'
+        },
+        form: {
+          id: 'detailed-queries-form',
+          title: 'Configurer l’analyse de requêtes',
+          description: 'Limitez éventuellement la plage temporelle et le nombre de résultats pour générer un rapport ciblé.',
+          action: '/queriesjson',
+          method: 'POST',
+          encType: 'multipart/form-data',
+          buttonText: 'Analyser les requêtes',
+          buttonIcon: 'query_stats',
+          fields: [
+            {
+              type: 'date',
+              name: 'start_date',
+              label: 'Date de début',
+              helper: 'Filtrer les requêtes qui commencent après cette date',
+              defaultValue: () => oneHundredTwentyDaysAgo()
+            },
+            {
+              type: 'time',
+              name: 'start_time',
+              label: 'Heure de début',
+              helper: 'Filtrer les requêtes qui commencent après cette heure',
+              defaultValue: '00:00'
+            },
+            {
+              type: 'date',
+              name: 'end_date',
+              label: 'Date de fin',
+              helper: 'Filtrer les requêtes qui se terminent avant cette date',
+              defaultValue: () => tomorrowDate()
+            },
+            {
+              type: 'time',
+              name: 'end_time',
+              label: 'Heure de fin',
+              helper: 'Filtrer les requêtes qui finissent avant cette heure',
+              defaultValue: '00:00'
+            },
+            {
+              type: 'select',
+              name: 'limit',
+              label: 'Nombre maximum par catégorie',
+              helper: 'Plus la limite est élevée, plus le rapport est détaillé (et potentiellement plus long à générer).',
+              defaultValue: '5',
+              options: [
+                { value: '1', label: '1' },
+                { value: '5', label: '5' },
+                { value: '25', label: '25' },
+                { value: '100', label: '100' },
+                { value: '1000', label: '1000' }
+              ]
+            },
+            {
+              type: 'select',
+              name: 'window',
+              label: 'Taille de fenêtre',
+              helper: 'Définissez la granularité des agrégats temporels.',
+              defaultValue: '60000',
+              options: [
+                { value: '1000', label: '1 seconde' },
+                { value: '60000', label: '1 minute' },
+                { value: '86400000', label: '1 jour' }
+              ]
+            },
+            {
+              type: 'hidden',
+              name: 'query_report_type',
+              defaultValue: 'INTERACTIVE'
+            },
+            {
+              type: 'file',
+              name: 'queriesjson',
+              label: 'Archive queries.json',
+              helper: 'Formats acceptés : .tar, .tar.gz, .tgz, .tar.xz, .tar.bzip2, .bzip2, .gz, .zip, .json',
+              accept: '.tar, .tar.gz, .tgz, .tar.xz, .tar.bzip2, .bzip2, .gz, .zip, .json',
+              requiredCount: 1,
+              fullWidth: true,
+              placeholder: 'Aucun fichier sélectionné',
+              buttonLabel: 'Choisir un fichier queries.json'
+            }
+          ]
+        }
+      },
+      {
+        id: 'schema',
+        navLabel: 'Schéma & repro',
+        navIcon: 'schema',
+        hero: {
+          eyebrow: 'Reproduction',
+          title: () => 'Générateur de schémas & scripts',
+          subtitle: 'Produisez des scripts d’initialisation pour recréer les sources, PDS et VDS observés dans un profile.json.'
+        },
+        form: {
+          id: 'schema-form',
+          title: 'Préparer la génération de schémas',
+          description: 'Personnalisez la taille des jeux de données et les paramètres de création avant de déposer votre profile.json.',
+          action: '/reproduction',
+          method: 'POST',
+          encType: 'multipart/form-data',
+          buttonText: 'Générer les scripts',
+          buttonIcon: 'construction',
+          fields: [
+            {
+              type: 'text',
+              inputType: 'number',
+              name: 'records',
+              label: 'Nombre de lignes par PDS',
+              helper: 'Utilisé pour créer des échantillons de tables.',
+              defaultValue: '20'
+            },
+            {
+              type: 'text',
+              inputType: 'number',
+              name: 'timeout',
+              label: 'Timeout (secondes)',
+              helper: 'Temps maximal alloué à la création des objets.',
+              defaultValue: '60'
+            },
+            {
+              type: 'select',
+              name: 'defaultCtasFormat',
+              label: 'Format CTAS par défaut',
+              helper: 'Optionnel : force un format spécifique lors des créations CTAS.',
+              defaultValue: '',
+              options: [
+                { value: '', label: 'Default' },
+                { value: 'ICEBERG', label: 'ICEBERG' },
+                { value: 'PARQUET', label: 'PARQUET' }
+              ]
+            },
+            {
+              type: 'text',
+              name: 'nasPath',
+              label: 'Répertoire source',
+              helper: 'Optionnel : chemin accessible depuis l’ensemble des nœuds.'
+            },
+            {
+              type: 'textarea',
+              name: 'columnDefYaml',
+              label: 'Overrides de colonnes (YAML)',
+              helper: 'Facultatif : définir des valeurs précises par colonne. Voir exemple ci-dessous.',
+              placeholder: '# Ajoutez ici vos définitions personnalisées',
+              fullWidth: true,
+              rows: 8
+            },
+            {
+              type: 'file',
+              name: 'profile',
+              label: 'Profile.json source',
+              helper: 'Formats acceptés : .tar, .gz, .tgz, .zip, .json',
+              accept: '.tar, .gz, .tgz, .zip, .json',
+              requiredCount: 1,
+              fullWidth: true,
+              placeholder: 'Aucun fichier sélectionné',
+              buttonLabel: 'Joindre un profile.json'
+            }
+          ]
+        },
+        checklist: [
+          'Téléversez le profile.json (zip ou fichier brut) et patientez jusqu’à réception de l’archive générée.',
+          'Décompressez l’archive et positionnez-vous dans le dossier créé.',
+          'Lancez le script `bash create.sh --host "http://localhost:9047" -u "monuser" -p "monmdp"` pour recréer les objets.',
+          'Consultez `debug.sql` si une étape échoue afin d’identifier les requêtes problématiques.',
+          'Créez manuellement les sources manquantes si nécessaire, puis rejouez le script.'
+        ],
+        codeSample: {
+          title: 'Exemple de surcharge YAML',
+          code: `tables:\n  - name: '"ns 1".table1'\n    columns:\n      - name: status\n        values: [Active, Inactive, Suspended]\n      - name: customerType\n        values: [Silver, Gold, Platinum]`
+        }
+      },
+      {
+        id: 'iostat-analysis',
+        navLabel: 'Analyse IOStat',
+        navIcon: 'monitoring',
+        hero: {
+          eyebrow: 'Système',
+          title: () => 'Analyser la sortie IOStat',
+          subtitle: 'Repérez les saturations de disques et anomalies système en important la sortie `iostat -x -c -d -t 1 600`.'
+        },
+        form: {
+          id: 'iostat-form',
+          title: 'Téléverser votre sortie IOStat',
+          description: 'Le rapport mettra en avant les pics d’attente disque, la latence et la saturation par device.',
+          action: '/iostat',
+          method: 'POST',
+          encType: 'multipart/form-data',
+          buttonText: 'Analyser IOStat',
+          buttonIcon: 'monitor_heart',
+          fields: [
+            {
+              type: 'file',
+              name: 'iostatfile',
+              label: 'Fichier IOStat',
+              helper: 'Utilisez idéalement la commande : iostat -x -c -d -t 1 600',
+              accept: '.txt, .log, .out',
+              requiredCount: 1,
+              fullWidth: true,
+              placeholder: 'Aucun fichier sélectionné',
+              buttonLabel: 'Sélectionner un fichier'
+            }
+          ]
+        }
+      },
+      {
+        id: 'top-analysis',
+        navLabel: 'Threaded Top',
+        navIcon: 'vertical_align_top',
+        hero: {
+          eyebrow: 'CPU & Threads',
+          title: () => 'Analyse threaded top',
+          subtitle: 'Appelez ce module avec la sortie DDC `LINES=100 top -H -n 120 -p 1 -d 2 -bw` pour déceler les threads dominants.'
+        },
+        form: {
+          id: 'top-form',
+          title: 'Fichier threaded top',
+          description: 'Identifiez les threads les plus consommateurs et les évolutions de charge de votre service.',
+          action: '/ttop',
+          method: 'POST',
+          encType: 'multipart/form-data',
+          buttonText: 'Analyser le fichier',
+          buttonIcon: 'stacked_bar_chart',
+          fields: [
+            {
+              type: 'file',
+              name: 'ttop',
+              label: 'Capture top',
+              helper: 'Recommandé : LINES=100 top -H -n 120 -p 1 -d 2 -bw',
+              accept: '.txt, .log, .out',
+              requiredCount: 1,
+              fullWidth: true,
+              placeholder: 'Aucun fichier sélectionné',
+              buttonLabel: 'Sélectionner un fichier'
+            }
+          ]
+        }
+      }
+    ];
+
+    const resolveValue = (value) => (typeof value === 'function' ? value() : value);
+
+    function UploadForm({ formConfig, onSubmit }) {
+      const hiddenFields = formConfig.fields.filter((field) => field.type === 'hidden');
+      const visibleFields = formConfig.fields.filter((field) => field.type !== 'hidden');
+      const fileFields = visibleFields.filter((field) => field.type === 'file');
+
+      const [fileState, setFileState] = useState(() => {
+        const initialState = {};
+        fileFields.forEach((field) => {
+          initialState[field.name] = false;
+        });
+        return initialState;
+      });
+
+      const [fileSummaries, setFileSummaries] = useState(() => {
+        const initialSummaries = {};
+        fileFields.forEach((field) => {
+          initialSummaries[field.name] = field.placeholder || 'Aucun fichier sélectionné';
+        });
+        return initialSummaries;
+      });
+
+      const createFileChangeHandler = useCallback(
+        (field) => (event) => {
+          const files = Array.from(event.target.files || []);
+          setFileState((prev) => ({
+            ...prev,
+            [field.name]: field.requiredCount ? files.length >= field.requiredCount : files.length > 0
+          }));
+          setFileSummaries((prev) => ({
+            ...prev,
+            [field.name]: files.length
+              ? files.map((file) => file.name).join(', ')
+              : field.placeholder || 'Aucun fichier sélectionné'
+          }));
+        },
+        []
+      );
+
+      const allFilesReady = fileFields.length === 0 || Object.values(fileState).every(Boolean);
+
+      const handleSubmit = (event) => {
+        if (typeof onSubmit === 'function') {
+          onSubmit(event);
+        }
+      };
+
+      return (
+        <form
+          id={formConfig.id}
+          action={formConfig.action}
+          method={formConfig.method}
+          encType={formConfig.encType}
+          className="upload-form"
+          onSubmit={handleSubmit}
+        >
+          <div className="upload-form__header">
+            {formConfig.title && <h2>{formConfig.title}</h2>}
+            {formConfig.description && <p>{formConfig.description}</p>}
+          </div>
+
+          <div className="form-grid">
+            {visibleFields.map((field) => {
+              const fieldId = `${formConfig.id}-${field.name}`;
+              const className = ['form-field', field.fullWidth ? 'form-field--full' : '']
+                .filter(Boolean)
+                .join(' ');
+
+              if (field.type === 'file') {
+                return (
+                  <div className={className} key={field.name}>
+                    <p className="form-label">
+                      <span className="material-symbols-rounded">attach_file</span>
+                      {field.label}
+                    </p>
+                    <label className="file-upload">
+                      <span className="file-upload__icon material-symbols-rounded">file_upload</span>
+                      <div className="file-upload__text">
+                        <span className="file-upload__title">{field.buttonLabel || 'Choisir un fichier'}</span>
+                        <span className="file-upload__subtitle">{fileSummaries[field.name]}</span>
+                      </div>
+                      <input
+                        id={fieldId}
+                        className="file-upload__input"
+                        type="file"
+                        name={field.name}
+                        accept={field.accept}
+                        multiple={field.multiple || (field.requiredCount || 0) > 1}
+                        onChange={createFileChangeHandler(field)}
+                        required={field.required !== false}
+                      />
+                    </label>
+                    {field.helper && <small className="form-helper">{field.helper}</small>}
+                  </div>
+                );
+              }
+
+              if (field.type === 'select') {
+                return (
+                  <div className={className} key={field.name}>
+                    <label className="form-label" htmlFor={fieldId}>
+                      <span className="material-symbols-rounded">tune</span>
+                      {field.label}
+                    </label>
+                    <select
+                      id={fieldId}
+                      name={field.name}
+                      defaultValue={resolveValue(field.defaultValue)}
+                      required={field.required !== false}
+                    >
+                      {field.options?.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    {field.helper && <small className="form-helper">{field.helper}</small>}
+                  </div>
+                );
+              }
+
+              if (field.type === 'textarea') {
+                return (
+                  <div className={className} key={field.name}>
+                    <label className="form-label" htmlFor={fieldId}>
+                      <span className="material-symbols-rounded">notes</span>
+                      {field.label}
+                    </label>
+                    <textarea
+                      id={fieldId}
+                      name={field.name}
+                      rows={field.rows || 6}
+                      placeholder={field.placeholder}
+                      defaultValue={resolveValue(field.defaultValue)}
+                    />
+                    {field.helper && <small className="form-helper">{field.helper}</small>}
+                  </div>
+                );
+              }
+
+              const inputType = field.inputType || field.type || 'text';
+
+              return (
+                <div className={className} key={field.name}>
+                  <label className="form-label" htmlFor={fieldId}>
+                    <span className="material-symbols-rounded">edit_square</span>
+                    {field.label}
+                  </label>
+                  <input
+                    id={fieldId}
+                    type={inputType}
+                    name={field.name}
+                    defaultValue={resolveValue(field.defaultValue)}
+                    placeholder={field.placeholder}
+                    required={field.required !== false}
+                  />
+                  {field.helper && <small className="form-helper">{field.helper}</small>}
                 </div>
-                <div class="row">
-                    <div>2. Extract zip</div>
-                </div>
-                <div class="row">
-                    <div>3. Open terminal (Mac, WSL or Linux) and go to folder where you extracted zip</div>
-                </div>
-                <div class="row">
-                    <div>4. Run <b>bash create.sh --host "http://localhost:9047" -u "myuser" -p "mypass"</b></div>
-                </div>
-                <div class="row">
-                    <div>5. If script fails consult the debug.sql and look for issues in sql statements</div>
-                </div>
-                <div class="row">
-                    <div>6. Also consider manually creating any missing data sources and try running the script again
-                    </div>
-                </div>
-            </article>
-            <div class="modal" id="modal">
-                <h5>Example Column Override Yaml</h5>
-                <pre><code>
-tables:
-  - name: '"ns 1".table1'
-    columns:
-      - name: status
-        values: [Active, Inactive, Suspended ]
-      - name: customerType 
-        values: [ Silver, Gold, Platinum ]
-                    </code></pre>
-                <nav>
-                    <button data-ui="#modal">Close</button>
-                </nav>
+              );
+            })}
+          </div>
+
+          {hiddenFields.map((field) => (
+            <input
+              key={field.name}
+              type="hidden"
+              name={field.name}
+              value={resolveValue(field.defaultValue)}
+            />
+          ))}
+
+          <div className="upload-form__footer">
+            <button className="primary-button" type="submit" disabled={!allFilesReady}>
+              {formConfig.buttonIcon && (
+                <span className="material-symbols-rounded">{formConfig.buttonIcon}</span>
+              )}
+              <span>{formConfig.buttonText || 'Envoyer'}</span>
+            </button>
+          </div>
+        </form>
+      );
+    }
+
+    function SectionRenderer({ section, version, onSubmit }) {
+      if (!section) {
+        return null;
+      }
+
+      const hero = section.hero || {};
+      const title = typeof hero.title === 'function' ? hero.title(version) : hero.title;
+      const subtitle = typeof hero.subtitle === 'function' ? hero.subtitle(version) : hero.subtitle;
+
+      return (
+        <section className="section" id={section.id} aria-labelledby={`${section.id}-title`}>
+          <div className="section__hero">
+            {hero.eyebrow && <p className="section__eyebrow">{hero.eyebrow}</p>}
+            {title && <h1 id={`${section.id}-title`}>{title}</h1>}
+            {subtitle && <p>{subtitle}</p>}
+          </div>
+
+          {section.cards?.length ? (
+            <div className="feature-grid">
+              {section.cards.map((card) => (
+                <article className="feature-card" key={card.title}>
+                  {card.icon && (
+                    <span className="feature-card__icon material-symbols-rounded">{card.icon}</span>
+                  )}
+                  <h3>{card.title}</h3>
+                  <p>{card.body}</p>
+                </article>
+              ))}
             </div>
+          ) : null}
 
-            <article class="fill">
-                <h5>Upload Form</h5>
-                <form method="POST" enctype="multipart/form-data" action="/reproduction">
-                    <fieldset>
-                        <div class="field label border">
-                            <input type="text" name="records" value="20">
-                            <label>PDS Records</label>
-                            <span class="helper">per PDS</span>
-                        </div>
-                        <div class="field label border">
-                            <input type="text" name="timeout" value="60">
-                            <label>Timeout Seconds</label>
-                            <span class="helper">used when creating PDS and VDS records</span>
-                        </div>
-                        <div class="field label suffix border">
-                            <select name="defaultCtasFormat">
-                                <option value="">Default</option>
-                                <option>ICEBERG</option>
-                                <option>PARQUET</option>
-                            </select>
-                            <i>arrow_drop_down</i>
-                            <label class="active">Default CTAS Format for sources</label>
-                            <span class="helper">optional: if this is not specified whatever the default for the version
-                                you have specified will be used</span>
-                        </div>
-                        <div class="field label border">
-                            <input type="text" name="nasPath">
-                            <label>Base source directory</label>
-                            <span class="helper">optional: path accessible on all executors</span>
-                        </div>
-                        <div class="medium-divider"></div>
-                        <div class="field textarea label border extra">
-                            <textarea name="columnDefYaml"></textarea>
-                            <label>Column Definition Override</label>
-                            <span class="helper">Use this when you need specific column values, click the question mark
-                                to see an example<i class="medium" data-ui="#modal">help</i> </span>
-                        </div>
-                        <div class="medium-divider"></div>
-                        <div class="field label prefix suffix border">
-                            <i>attach_file</i>
-                            <input type="text">
-                            <input type="file" name="profile" accept=".tar, .gz, .tgz, .zip, .json"
-                                onchange="showButton(this, 1, 'repro-btn');">
-                            <label>Profiles</label>
-                            <span class="helper">attach one profile in a text file, *.tar, *.tgz, *.gz or *.zip
-                                file</span>
-                            <i>attach_file</i>
-                        </div>
+          {section.form && (
+            <UploadForm formConfig={section.form} onSubmit={onSubmit} />
+          )}
 
-                        <button id="repro-btn" disabled>generate</button>
-                    </fieldset>
-                </form>
-            </article>
+          {section.checklist?.length ? (
+            <div className="section__checklist">
+              <h2>Suivez les étapes</h2>
+              <ol>
+                {section.checklist.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          ) : null}
+
+          {section.codeSample ? (
+            <div className="code-card">
+              <div className="code-card__header">
+                <span className="material-symbols-rounded">description</span>
+                <span>{section.codeSample.title}</span>
+              </div>
+              <pre>
+                <code>{section.codeSample.code}</code>
+              </pre>
+            </div>
+          ) : null}
         </section>
-        <section id="home">
-            <header class="responsive">
-                <h4 class="max center-align about_version">DQD </h4>
-            </header>
-            <article class="fill">
-                <h5>Profile.json and Queries.json Tools Written by the Support Tooling Team</h5>
-                <p>
-                    If you find something you do not like here or would like to improve Dremio Query Doctor (DQD) you
-                    can <a class="row wave" href="https://github.com/rsvihladremio/dqd">submit code or issues here</a>
-                </p>
-            </article>
-        </section>
-        <div id="loader" class="modal">
-            <h5>Loading...</h5>
-            <div>Please wait</div>
-            <a class="loader large"></a>
+      );
+    }
+
+    function Loader() {
+      return (
+        <div className="loader-overlay" role="alert" aria-live="assertive">
+          <div className="loader-card">
+            <div className="spinner" aria-hidden="true"></div>
+            <h3>Analyse en cours…</h3>
+            <p>Vos rapports se préparent. Cette opération peut prendre quelques instants.</p>
+          </div>
         </div>
-    </main>
+      );
+    }
+
+    function App() {
+      const [activeSection, setActiveSection] = useState('home');
+      const [version, setVersion] = useState('');
+      const [loading, setLoading] = useState(false);
+      const [sidebarOpen, setSidebarOpen] = useState(false);
+
+      useEffect(() => {
+        let isMounted = true;
+        async function fetchVersion() {
+          try {
+            const response = await fetch('/about.json');
+            if (!response.ok) {
+              throw new Error('HTTP ' + response.status);
+            }
+            const data = await response.json();
+            if (isMounted) {
+              setVersion(data?.version ? `DQD ${data.version}` : 'DQD');
+            }
+          } catch (error) {
+            console.warn('Impossible de récupérer la version', error);
+          }
+        }
+
+        fetchVersion();
+        return () => {
+          isMounted = false;
+        };
+      }, []);
+
+      const handleNav = (sectionId) => {
+        setActiveSection(sectionId);
+        setSidebarOpen(false);
+      };
+
+      const handleFormSubmit = () => {
+        setLoading(true);
+        setSidebarOpen(false);
+      };
+
+      const currentSection = SECTIONS.find((section) => section.id === activeSection) || SECTIONS[0];
+
+      return (
+        <div className="app-shell">
+          <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : ''}`}>
+            <div className="sidebar__header">
+              <span className="sidebar__product">Dremio Query Doctor</span>
+              <span className="sidebar__tagline">Diagnostics guidés pour vos fichiers de support</span>
+              <span className="sidebar__version">{version || 'version inconnue'}</span>
+            </div>
+            <nav className="sidebar__nav" aria-label="Navigation principale">
+              {SECTIONS.map((section) => (
+                <button
+                  key={section.id}
+                  type="button"
+                  className={`sidebar__link ${activeSection === section.id ? 'is-active' : ''}`}
+                  onClick={() => handleNav(section.id)}
+                >
+                  <span className="material-symbols-rounded">{section.navIcon}</span>
+                  <span>{section.navLabel}</span>
+                </button>
+              ))}
+            </nav>
+            <div className="sidebar__footer">
+              <div>Besoin d’aide supplémentaire ?</div>
+              <a href="https://github.com/rsvihladremio/dqd" target="_blank" rel="noreferrer">
+                Contribuer sur GitHub
+              </a>
+            </div>
+          </aside>
+          <main className="main">
+            <header className="topbar">
+              <button
+                type="button"
+                className="icon-button"
+                aria-label={sidebarOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+                onClick={() => setSidebarOpen((open) => !open)}
+              >
+                <span className="material-symbols-rounded">{sidebarOpen ? 'close' : 'menu'}</span>
+              </button>
+              <div className="topbar__title">
+                <span className="topbar__product">Dremio Query Doctor</span>
+                {version && <span className="topbar__version">{version}</span>}
+              </div>
+            </header>
+            <div className="main__content">
+              <SectionRenderer section={currentSection} version={version} onSubmit={handleFormSubmit} />
+            </div>
+          </main>
+          {loading && <Loader />}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
+</html>
