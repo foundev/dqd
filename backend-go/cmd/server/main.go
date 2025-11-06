@@ -59,10 +59,10 @@ func setupRouter() *chi.Mux {
 	// Routes
 	r.Get("/api/about.json", handlers.GetAbout)
 
-	// Placeholder routes for future implementation
-	r.Post("/api/profile", handlers.NotImplemented("POST /api/profile"))
-	r.Post("/api/simple-profile", handlers.NotImplemented("POST /api/simple-profile"))
-	r.Post("/api/profiles", handlers.NotImplemented("POST /api/profiles"))
+	// Profile analysis routes
+	r.Post("/api/simple-profile", handlers.PostSimpleProfile)
+	r.Post("/api/profile", handlers.PostProfile)
+	r.Post("/api/profiles", handlers.PostProfiles)
 	r.Post("/api/queriesjson", handlers.NotImplemented("POST /api/queriesjson"))
 	r.Post("/api/reproduction", handlers.NotImplemented("POST /api/reproduction"))
 	r.Post("/api/iostat", handlers.NotImplemented("POST /api/iostat"))
